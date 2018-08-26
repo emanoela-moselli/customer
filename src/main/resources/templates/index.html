@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Customer</title>
+<script th:src="@{/js/angular.min.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/controller/customer.js}"></script>
+<script th:src="@{/js/directive/loading.js}"></script>
+<script
+	src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
+
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
+
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	crossorigin="anonymous">
+
+</head>
+
+<body data-ng-app="appCustomer" data-ng-controller="customerController as customerCtr" class="form-group">
+
+	<div id="managerCustomerDv" data-ng-show="customerCtr.showForm" class="container">
+
+
+
+		<form data-ng-submit="customerCtr.submitCustomer()" name="form" class="needs-validation'" novalidate>
+
+			<div class="row">
+				<div class="col-md-8 order-md-1">
+					<h4 class="mb-3">Customer</h4>
+					
+					<div class="mb-3">
+						<label>First name <span style="color: red;"> *</span></label> 
+						<input type="text" class="form-control {{ form.$submitted && form.firstName.$invalid ?'is-invalid':''}}"
+							name="firstName" data-ng-model="customerCtr.customer.firstName"
+							data-ng-maxlength="100" data-ng-minlength="2" required /> 
+						<span class="messages invalid-feedback"  data-ng-show="form.$submitted && form.firstName.$invalid">
+							<span data-ng-show="form.firstName.$error.required">Valid first name is required.</span> 
+							<span data-ng-show="form.firstName.$error.minlength">Valid first name is required.</span>
+						</span>
+					</div>
+
+					<div class="mb-3">
+						<label>Last name <span style="color: red;"> *</span></label> 
+						<input type="text" class="form-control {{ form.$submitted && form.lastName.$invalid  ?'is-invalid':''}}"
+							name="lastName" data-ng-model="customerCtr.customer.lastName"
+							maxlength="250" data-ng-minlength="2" required /> 
+						<span class="messages invalid-feedback" data-ng-show="form.$submitted && form.lastName.$invalid">
+							<span data-ng-show="form.lastName.$error.required">Valid last name is required.</span>
+						</span>
+					</div>
+
+					<div class="mb-3">
+						<label>Phone <span style="color: red;"> *</span></label> 
+						<input class="form-control {{ form.$submitted && form.phoneNumber.$invalid  ?'is-invalid':''}}"
+							name="phoneNumber"
+							data-ng-model="customerCtr.customer.phoneNumber"
+							data-ng-maxlength="11" data-ng-minlength="5" required /> 
+						<span class="messages invalid-feedback"  data-ng-show="form.$submitted && form.phoneNumber.$invalid">
+							<span data-ng-show="form.phoneNumber.$invalid">Valid phone is required.</span>
+						</span>
+					</div>
+					
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-8 order-md-1 ">
+					<h4 class="mb-3">Address</h4>
+					<div class="row">
+						<div class="col-md-8 order-md-1">
+							<label for="number">Type<span style="color: red;"> *</span></label> 
+							<select name="typeS" data-ng-model="customerCtr.address.type" class="custom-select d-block w-100 {{ customerCtr.erroAddressSubmit || customerCtr.erroAddressAdd ?'is-invalid':''}}">
+								<option data-ng-repeat="addressType in customerCtr.addressTypes" value="{{addressType}}">{{addressType}}</option>
+							</select> 
+							<span class="messages invalid-feedback" data-ng-show="customerCtr.erroAddressSubmit"> 
+								Billing, Shipping and Default Addresses are required. 
+							</span> 
+							<span class="messages invalid-feedback" data-ng-show="customerCtr.erroAddressAdd"> Type is required. </span>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-8 mb-3">
+							<label for="address">Address<span style="color: red;">*</span></label>
+							<input type="text" class="form-control {{ customerCtr.erroAddress ?'is-invalid':''}} "
+								name="address" data-ng-model="customerCtr.address.address">
+							<span class="messages invalid-feedback" data-ng-show="customerCtr.erroAddress"> Address is required. </span>
+						</div>
+						<div class="col-md-4 mb-3">
+							<label for="number">Number</label> 
+							<input type="text" class="form-control" name="number" data-ng-model="customerCtr.address.number">
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-4 mb-3">
+							<label for="zipCode">Zipcode<span style="color: red;">*</span></label>
+							<input type="text" class="form-control {{ customerCtr.erroZipCode || customerCtr.erroZipCode ?'is-invalid':''}}"
+								name="zipCode" data-ng-model="customerCtr.address.zipCode">
+							<span class="messages invalid-feedback" data-ng-show="customerCtr.erroZipCode"> Zipcode is required. </span>
+						</div>
+
+						<div class="col-md-4 mb-3">
+							<label for="city">City<span style="color: red;">*</span></label>
+							<input type="text" class="form-control {{ customerCtr.erroCity || customerCtr.erroCity ?'is-invalid':''}}"
+								name="city" data-ng-model="customerCtr.address.city"> 
+							<span class="messages invalid-feedback" data-ng-show="customerCtr.erroCity"> City is required. </span>
+						</div>
+
+						<div class="col-md-4 mb-3">
+							<label for="country">Country<span style="color: red;">*</span></label>
+							<input type="text" class="form-control {{ customerCtr.erroCountry || customerCtr.erroCountry ?'is-invalid':''}}"
+								name="country" data-ng-model="customerCtr.address.country">
+							<span class="messages invalid-feedback" data-ng-show="customerCtr.erroCountry"> Country is required. </span>
+						</div>
+					</div>
+					
+					<div class="input-group-append">
+						<button class="btn btn-secondary" type="button" data-ng-click="customerCtr.addAddress()">Add Address</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-8 order-md-1 ">
+					<hr class="mb-3">
+				</div>
+			</div>
+
+			<div class="row" data-ng-repeat="address in customerCtr.customer.addresses">
+				<div class="col-md-3 mb-3">
+					<address>
+						<strong>{{address.type}} </strong><br> {{address.address }} ,
+						{{ address.number }}<br> {{ address.city }}, {{
+						address.zipCode }}<br> {{ address.country }}
+
+					</address>
+				</div>
+				<div class="col-md-3 mb-3">
+					<strong>
+						<a data-ng-click="customerCtr.editAddress(address)" href="#" title="Edit" class="icon">
+							<i class="glyphicon glyphicon-edit"></i>
+						</a>
+					</strong>
+					<strong>
+						<a data-ng-click="customerCtr.deleteAddress(address)" href="#" title="Delete" class="icon">
+							<i class="glyphicon glyphicon-trash"></i>
+						</a>
+					</strong>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-8 order-md-1 ">
+					<hr class="mb-3">
+					<button class="btn btn-primary btn-lg btn-block" type="submit">Save</button>
+					<button class="btn btn-secondary btn-lg btn-block" type="button" data-ng-click="customerCtr.showForm = !customerCtr.showForm;customerCtr.getCustomers();customerCtr._clearFormData();">Cancel</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<br>
+	<div id="listDv" data-ng-show="!customerCtr.showForm" class="container">
+
+		<br>
+		<div class="alert alert-success mb-3" role="alert" data-ng-show="customerCtr.showMessageSuccess">Success</div>
+		<ul class="nav justify-content-end">
+			<li class="nav-item">
+				<button type="button" class="btn btn-primary" 
+					data-ng-click="customerCtr.showForm = !customerCtr.showForm;form.$submitted = false;customerCtr.createCustomer()">Create
+					Customer
+				</button>
+			</li>
+		</ul>
+
+		<hr class="mb-4">
+
+		<div class="row">
+			<div class="col-md-8 order-md-1 ">
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label for="filterFirstName">First Name</label> 
+						<input id="filterFirstNameIT" class="form-control" aria-describedby="filterFirstNameHelp" data-ng-model="customerCtr.firstNameFilter"> 
+						<small id="filterFirstNameHelp" class="form-text text-muted"> Fill to filter by first Name </small>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="filterLastName">Last Name</label> 
+						<input id="filterLastNameIT" class="form-control" aria-describedby="filterLastNameHelp" data-ng-model="customerCtr.lastNameFilter"> 
+						<small id="filterLastNameHelp" class="form-text text-muted"> Fill to filter by last Name </small>
+					</div>
+
+					<div class="col-md-6 mb-3">
+						<button type="button" class="btn btn-primary" data-ng-click="customerCtr.filter()">Filter</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table table-striped table-sm">
+				<thead>
+					<tr>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Phone</th>
+						<th>Options</th>
+					</tr>
+				</thead>
+				<tr data-ng-repeat="customer in customerCtr.customers">
+					<td>{{ customer.firstName }}</td>
+					<td>{{ customer.lastName }}</td>
+					<td>{{ customer.phoneNumber }}</td>
+					<td class="actions">
+						<a data-ng-click="customerCtr.editCustomer(customer)" href="#" title="Edit" class="icon"><i class="glyphicon glyphicon-edit"></i></a>
+						<a data-ng-click="customerCtr.deleteCustomer(customer)" href="#" title="Delete" class="icon"><i class="glyphicon glyphicon-trash"></i></a></td>
+				</tr>
+			</table>
+		</div>
+
+		{{customerCtr.currentPage + 1}}/{{customerCtr.totalPages}}
+		<nav aria-label="Page navigation example">
+			<ul class="pagination justify-content-center">
+				<li class="page-item {{customerCtr.btnPrevious?'disabled':''}}">
+					<a class="page-link" tabindex="-1"
+						data-ng-click="customerCtr.previousPage()"
+						data-ng-disabled="customerCtr.btnPrevious" href="#">Previous
+					</a>
+				</li>
+				<li class="page-item {{customerCtr.btnNext?'disabled':''}}">
+					<a class="page-link" data-ng-click="customerCtr.nextPage()"
+					data-ng-disabled="customerCtr.btnNext" href="#">Next
+					</a>
+				</li>
+			</ul>
+		</nav>
+
+	</div>
+
+	<p class="text-center text-muted" if-loading>
+		<span class="fa fa-spinner fa-spin fa-4x"></span> <br />
+		<br /> Loading, please wait...
+	</p>
+
+</body>
+
+</html>
